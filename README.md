@@ -28,7 +28,7 @@ Pure HTML · Vanilla CSS · Vanilla JavaScript — no build step, no dependencie
 └── work/
     ├── index.html                  # Work listing page
     ├── motogp.html                 # Case study: MotoGP sponsorship identity
-    ├── payment.html                # Case study: Multi-currency payment flow
+    ├── payment.html                # Case study: Trading platform design system
     └── gonashop.html               # Case study: M•GonaShop e-commerce
 ```
 
