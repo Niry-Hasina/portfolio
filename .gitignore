@@ -1,0 +1,20 @@
+# OS & editor generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+
+# VS Code
+.vscode/
+
+# JetBrains IDEs
+.idea/
+
+# Node (if you ever add tooling)
+node_modules/
+npm-debug.log*
+
+# Temporary / draft files
+*.tmp
+*.bak
+*~
