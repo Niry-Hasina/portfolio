@@ -2,6 +2,8 @@
 
 Personal portfolio website for **Niry Hasina Randriamihamina**, Senior Digital Product Designer & AI-Augmented Creative based in Dubai, UAE.
 
+Live at **[niry-hasina.com](https://www.niry-hasina.com)**
+
 ## Stack
 
 Pure HTML · Vanilla CSS · Vanilla JavaScript — no build step, no dependencies.
@@ -12,7 +14,7 @@ Pure HTML · Vanilla CSS · Vanilla JavaScript — no build step, no dependencie
 .
 ├── index.html                      # Home page
 ├── about.html                      # Background & experience
-├── netlify.toml                    # Netlify deploy config
+├── robots.txt                      # Crawler directives
 ├── .gitignore
 ├── README.md
 │
@@ -32,20 +34,12 @@ Pure HTML · Vanilla CSS · Vanilla JavaScript — no build step, no dependencie
     └── gonashop.html               # Case study: M•GonaShop e-commerce
 ```
 
-## Deployment
-
-### Netlify (recommended)
-
-1. Push this repo to GitHub.
-2. In Netlify → **Add new site → Import an existing project**.
-3. Select the repo — Netlify will detect `netlify.toml` automatically.
-4. Click **Deploy**. No build command needed.
-
-### GitHub Pages
+## Deployment — GitHub Pages
 
 1. Go to **Settings → Pages**.
 2. Set source to **Deploy from a branch → main → / (root)**.
-3. Save — the site will be live at `https://<username>.github.io/<repo-name>/`.
+3. Enable **Enforce HTTPS** in the same settings panel.
+4. Save — the site will be live at the custom domain configured in `CNAME`.
 
 ## Local preview
 
