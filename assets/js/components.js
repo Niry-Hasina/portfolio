@@ -48,13 +48,13 @@
     if (!el) return;
     el.outerHTML = `
   <nav>
-    <a class="logo" href="${url('index.html')}">NIRY HASINA R.</a>
+    <a class="logo" href="${url('')}">NIRY HASINA R.</a>
     <div class="navlinks">
-      <a href="${url('about.html')}"${ac('about')}>About</a>
+      <a href="${url('about/')}"${ac('about')}>About</a>
       <a href="${url('work/')}"${ac('work')}>Work</a>
-      <a href="${url('index.html#contact')}">Contact</a>
+      <a href="${url('#contact')}">Contact</a>
     </div>
-    <a class="nav-cta" href="${url('index.html#contact')}">Get in touch</a>
+    <a class="nav-cta" href="${url('#contact')}">Get in touch</a>
     <button class="nav-burger" id="navBurger" aria-label="Menu"><span></span><span></span><span></span></button>
   </nav>`;
   }
@@ -65,9 +65,9 @@
     if (!el) return;
     el.outerHTML = `
   <div class="mobile-panel" id="mobilePanel">
-    <a href="${url('about.html')}">About</a>
+    <a href="${url('about/')}">About</a>
     <a href="${url('work/')}">Work</a>
-    <a href="${url('index.html#contact')}" id="mobile-contact-link">Contact</a>
+    <a href="${url('#contact')}" id="mobile-contact-link">Contact</a>
   </div>`;
   }
 
