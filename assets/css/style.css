@@ -1279,6 +1279,7 @@ footer {
 .ic-fy    { background: linear-gradient(135deg, #FF4D6D, #B721FF); }
 .ic-mj    { background: #111; }
 .ic-code  { background: linear-gradient(135deg, #E44D26, #2965F1); }
+.ic-acad  { background: linear-gradient(135deg, #C8002A, #7B0019); }
 
 /* ---------- GALLERY ---------- */
 .gallery-wrap {
@@ -1319,10 +1320,15 @@ footer {
 
 .g-tile img {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center center;
+  display: block;
   transition: transform .4s ease;
 }
 
@@ -1407,6 +1413,7 @@ footer {
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .lightbox-track {
@@ -1414,7 +1421,6 @@ footer {
   width: 100%;
   height: 100%;
   transition: transform .4s cubic-bezier(.2,.7,.2,1);
-  overflow: hidden;
 }
 
 .lightbox-slide {
@@ -1682,4 +1688,199 @@ footer {
     flex-direction: column;
     gap: 24px;
   }
+
+  .work-gate-title {
+    font-size: clamp(34px, 12vw, 64px);
+  }
+
+  .work-gate-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .work-gate-btn {
+    justify-content: center;
+  }
+}
+
+/* ---------- WORK ACCESS GATE ---------- */
+.work-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  background: var(--black-panel);
+  color: var(--paper);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity .5s ease, visibility .5s ease;
+}
+
+/* Shown only while html.gate-locked is present — set by gate.js when the
+   visitor hasn't unlocked yet. On a fresh load where they're already
+   unlocked, this class is never added, so the gate stays hidden from the
+   very first paint instead of flashing visible and waiting on a submit
+   handler that will never fire. */
+html.gate-locked .work-gate {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+html.gate-locked body > *:not(.work-gate) {
+  opacity: 0;
+  visibility: hidden;
+}
+
+body > *:not(.work-gate) {
+  transition: opacity .6s ease;
+}
+
+.work-gate-inner {
+  max-width: 560px;
+  width: 100%;
+}
+
+.work-gate-kicker {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.work-gate-title {
+  font-family: 'Archivo Black', sans-serif;
+  text-transform: uppercase;
+  font-size: clamp(42px, 7.5vw, 80px);
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  margin-bottom: 22px;
+}
+
+.work-gate-label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted-dark);
+  margin-bottom: 28px;
+}
+
+.work-gate-form {
+  display: flex;
+  align-items: flex-end;
+  gap: 18px;
+  border-bottom: 1px solid var(--line-dark);
+  padding-bottom: 14px;
+}
+
+.work-gate-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--paper);
+  font-family: 'Inter', sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  padding: 6px 0;
+}
+
+.work-gate-input::placeholder {
+  color: var(--muted-dark);
+  font-weight: 400;
+}
+
+.work-gate-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 700;
+  background: var(--red);
+  color: var(--paper);
+  border: none;
+  cursor: pointer;
+  padding: 12px 20px;
+  transition: background .2s, transform .2s;
+  white-space: nowrap;
+}
+
+.work-gate-btn:hover {
+  background: var(--paper);
+  color: var(--ink);
+  transform: translateY(-2px);
+}
+
+.work-gate-error {
+  margin-top: 16px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  color: var(--red);
+  opacity: 0;
+  height: 0;
+  overflow: hidden;
+  transition: opacity .2s ease;
+}
+
+.work-gate-error.is-visible {
+  opacity: 1;
+  height: auto;
+  margin-top: 16px;
+}
+
+.work-gate-request {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 28px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--muted-dark);
+}
+
+.work-gate-request a {
+  color: var(--paper);
+  border-bottom: 1px solid var(--line-dark);
+  transition: color .2s, border-color .2s;
+}
+
+.work-gate-request a:hover {
+  color: var(--red);
+  border-color: var(--red);
+}
+
+.work-gate-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted-dark);
+  border-bottom: 1px solid transparent;
+  transition: color .2s, border-color .2s;
+}
+
+.work-gate-back:hover {
+  color: var(--red);
+  border-color: var(--red);
 }

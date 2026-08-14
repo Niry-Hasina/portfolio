@@ -24,7 +24,7 @@
    * Examines the current path to decide which nav link is active.
    * Works at any depth and with any base path (Netlify, GitHub Pages).        */
   const segments = window.location.pathname.split('/').filter(Boolean);
-  const currentFile  = segments[segments.length - 1] || 'index.html';
+  const currentFile = segments[segments.length - 1] || 'index.html';
   const parentFolder = segments.length >= 2 ? segments[segments.length - 2] : '';
 
   function isActive(page) {
@@ -51,7 +51,7 @@
     <a class="logo" href="${url('')}">NIRY HASINA R.</a>
     <div class="navlinks">
       <a href="${url('about/')}"${ac('about')}>About</a>
-      <a href="${url('work/')}"${ac('work')}>Work</a>
+      <a href="${url('work/')}"${ac('work')} target="_blank" rel="noopener">Work</a>
       <a href="${url('#contact')}">Contact</a>
     </div>
     <a class="nav-cta" href="${url('#contact')}">Get in touch</a>
@@ -66,7 +66,7 @@
     el.outerHTML = `
   <div class="mobile-panel" id="mobilePanel">
     <a href="${url('about/')}">About</a>
-    <a href="${url('work/')}">Work</a>
+    <a href="${url('work/')}" target="_blank" rel="noopener">Work</a>
     <a href="${url('#contact')}" id="mobile-contact-link">Contact</a>
   </div>`;
   }
@@ -82,7 +82,7 @@
       <div class="footer-grid">
         <div class="footer-col"><span class="label">Contact</span><a href="mailto:randriamihamina@outlook.com">randriamihamina@outlook.com</a><br>+971 55 327 6901</div>
         <div class="footer-col"><span class="label">Elsewhere</span><a href="#">niry-hasina.com</a><br><a href="#">linkedin.com/in/niry-hasina</a></div>
-        <div class="footer-col"><span class="label">Based in</span>Silicon Oasis, Dubai, UAE<br>EN · FR · MG</div>
+        <div class="footer-col"><span class="label">Based in</span>Dubai, UAE<br>EN · FR · MG</div>
       </div>
     </div>
   </footer>`;
@@ -95,7 +95,7 @@
 
   /* Re-init burger after nav is injected */
   const burger = document.getElementById('navBurger');
-  const panel  = document.getElementById('mobilePanel');
+  const panel = document.getElementById('mobilePanel');
 
   if (burger && panel) {
     burger.addEventListener('click', () => {
@@ -109,13 +109,13 @@
   if (mobileContact) {
     mobileContact.addEventListener('click', () => {
       if (burger) burger.classList.remove('open');
-      if (panel)  panel.classList.remove('open');
+      if (panel) panel.classList.remove('open');
     });
   }
 
   /* Expose closeMenu globally (safety net) */
   window.closeMenu = function () {
     if (burger) burger.classList.remove('open');
-    if (panel)  panel.classList.remove('open');
+    if (panel) panel.classList.remove('open');
   };
 })();
