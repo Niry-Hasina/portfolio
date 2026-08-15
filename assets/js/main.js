@@ -110,12 +110,25 @@ document.querySelectorAll('.reveal, .stagger').forEach(el => io.observe(el));
   function lbGoTo(i) {
     const next = (i + lbTotal) % lbTotal;
     if (next === lbIndex) return;
-    stage.classList.add('is-fading');
-    window.setTimeout(() => {
+
+    let swapped = false;
+    function swap() {
+      if (swapped) return;
+      swapped = true;
       lbIndex = next;
       renderSlide();
-      stage.classList.remove('is-fading');
-    }, 160);
+      // Force the browser to paint the faded-out frame with the new image
+      // before triggering the fade back in. Without this, Safari/iOS can
+      // collapse both style changes into one frame and skip the transition,
+      // which briefly shows the old and new image blended together.
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => stage.classList.remove('is-fading'));
+      });
+    }
+
+    stage.classList.add('is-fading');
+    lbImg.addEventListener('transitionend', swap, { once: true });
+    window.setTimeout(swap, 220);   // fallback in case transitionend doesn't fire
   }
 
   /* ─── Click: zoom in at cursor / dezoom on tap (only if not a drag) ─── */
