@@ -25,6 +25,16 @@ const io = new IntersectionObserver((entries) => {
 
 document.querySelectorAll('.reveal, .stagger').forEach(el => io.observe(el));
 
+/* ─── Basic image-protection deterrent (right-click / drag) ──────
+ * Client-side only — a determined visitor can still get the image via
+ * devtools, view-source, or a screenshot. This just removes the casual
+ * right-click-and-save / drag-out path. */
+function guardImage(img) {
+  img.addEventListener('contextmenu', (e) => e.preventDefault());
+  img.addEventListener('dragstart', (e) => e.preventDefault());
+}
+document.querySelectorAll('.g-tile img').forEach(guardImage);
+
 /* ─── Gallery lightbox ──────────────────────────────────────── */
 (function () {
   const galleryTiles = document.querySelectorAll('.g-tile');
@@ -48,6 +58,7 @@ document.querySelectorAll('.reveal, .stagger').forEach(el => io.observe(el));
 
   const lbImg = document.createElement('img');
   lbImg.className = 'lightbox-img';
+  guardImage(lbImg);
   const lbPlaceholder = document.createElement('div');
   lbPlaceholder.className = 'lightbox-img-placeholder';
   stage.appendChild(lbImg);
