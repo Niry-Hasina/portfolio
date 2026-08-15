@@ -1280,6 +1280,7 @@ footer {
 .ic-mj    { background: #111; }
 .ic-code  { background: linear-gradient(135deg, #E44D26, #2965F1); }
 .ic-acad  { background: linear-gradient(135deg, #C8002A, #7B0019); }
+.ic-canva { background: linear-gradient(135deg, #00C4CC 0%, #7D2AE8 100%); }
 
 /* ---------- GALLERY ---------- */
 .gallery-wrap {
@@ -1299,8 +1300,13 @@ footer {
 
 .gallery {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  /* auto-fit collapses any column that ends up with no tile in it and lets
+     the remaining tiles' 1fr tracks expand to fill the row — so 3 tiles
+     stretch to fill the full width just as well as 6 do, with no leftover
+     empty space, at any viewport width. */
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   grid-auto-rows: 140px;
+  grid-auto-flow: dense;
   gap: 2px;
   background: var(--line);
   border: 1px solid var(--line);
@@ -1390,6 +1396,7 @@ footer {
 .g-2x2 { grid-column: span 2; grid-row: span 2; }
 .g-2x1 { grid-column: span 2; grid-row: span 1; }
 .g-1x1 { grid-column: span 1; grid-row: span 1; }
+.g-1x2 { grid-column: span 1; grid-row: span 2; }   /* taller portrait tile, e.g. phone-screenshot images */
 
 /* ---------- LIGHTBOX ---------- */
 .lightbox {
@@ -1582,7 +1589,8 @@ footer {
   .g-tile,
   .g-2x2,
   .g-2x1,
-  .g-1x1 {
+  .g-1x1,
+  .g-1x2 {
     grid-row: auto;
   }
 
@@ -1595,6 +1603,11 @@ footer {
   .g-1x1 {
     grid-column: span 1;
     aspect-ratio: 4 / 3;
+  }
+
+  .g-1x2 {
+    grid-column: span 1;
+    aspect-ratio: 3 / 4;
   }
 
   .lightbox {

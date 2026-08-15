@@ -1,27 +1,3 @@
-/**
- * assets/js/gate.js — Client-side access gate for the confidential /work section.
- *
- * Include as a blocking script (no defer/async) as early as possible in <head>
- * on work/index.html and every page underneath it, so the check runs before
- * the page paints.
- *
- * The check is case-insensitive (input is lowercased before hashing), so
- * generate the hash from the LOWERCASE version of the code.
- *
- * To change the access code: open any page in a browser console and run
- *   crypto.subtle.digest('SHA-256', new TextEncoder().encode('yournewcode'))
- *     .then(b => console.log(Array.from(new Uint8Array(b))
- *       .map(x => x.toString(16).padStart(2, '0')).join('')))
- * then paste the printed hash below as ACCESS_CODE_HASH.
- *
- * IMPORTANT — after changing the hash, also bump the version query string on
- * every page's <script src="assets/js/gate.js?v=X"> tag. Browsers cache this
- * file; without a version bump, visitors (and you) can keep running the OLD
- * code check for a while and "the right code" will look broken.
- *
- * Current code: "BONJOUR2026" (case-insensitive) — change it any time using
- * the steps above.
- */
 (function () {
   var SESSION_KEY = 'nhr_work_access';
   var ACCESS_CODE_HASH = '6b8cd7f1d8879d4f91a5a1a8a58e03b6d03c0e0956130e59a391c5af04fac13a';
