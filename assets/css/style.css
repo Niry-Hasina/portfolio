@@ -1413,37 +1413,42 @@ footer {
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
 }
 
+/* Single reusable stage — one image element whose src is swapped on
+   next/prev, instead of a multi-slide track. Nothing to misalign, nothing
+   to size wrong: there is only ever one image box. */
 .lightbox-track {
   display: flex;
   width: 100%;
   height: 100%;
-  transition: transform .4s cubic-bezier(.2,.7,.2,1);
-}
-
-.lightbox-slide {
-  min-width: 100%;
-  height: 100%;
-  display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
 }
 
-.lightbox-slide img {
+.lightbox-img {
+  display: block;
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
+  opacity: 1;
+  transition: opacity .18s ease, transform .35s cubic-bezier(.2, .7, .2, 1);
 }
 
-.lightbox-slide .cs-placeholder {
+.lightbox-img-placeholder {
+  display: none;
   color: var(--muted-dark);
   font-family: 'Montserrat', sans-serif;
   font-size: 13px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
+  opacity: 1;
+  transition: opacity .18s ease;
+}
+
+.lightbox-track.is-fading .lightbox-img,
+.lightbox-track.is-fading .lightbox-img-placeholder {
+  opacity: 0;
 }
 
 .lightbox-close {
@@ -1453,16 +1458,17 @@ footer {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid var(--line-dark);
+  background: rgba(10, 10, 11, 0.75);
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
   color: #fff;
-  font-size: 18px;
+  font-size: 20px;
   cursor: pointer;
   z-index: 1010;
-  transition: background .2s;
+  transition: background .2s, border-color .2s;
 }
 
-.lightbox-close:hover { background: var(--red); }
+.lightbox-close:hover { background: var(--red); border-color: var(--red); }
 
 .lightbox-arrow {
   position: absolute;
@@ -1471,19 +1477,20 @@ footer {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid var(--line-dark);
+  background: rgba(10, 10, 11, 0.75);
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
   color: #fff;
   font-size: 20px;
   cursor: pointer;
   z-index: 1010;
-  transition: background .2s;
+  transition: background .2s, border-color .2s;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.lightbox-arrow:hover { background: var(--red); }
+.lightbox-arrow:hover { background: var(--red); border-color: var(--red); }
 .lightbox-arrow.prev { left: -10px; }
 .lightbox-arrow.next { right: -10px; }
 
@@ -1499,12 +1506,11 @@ footer {
 }
 
 /* Zoom on click */
-.lightbox-slide img {
+.lightbox-img {
   cursor: zoom-in;
-  transition: transform .35s cubic-bezier(.2, .7, .2, 1);
 }
 
-.lightbox-slide img.lb-zoomed {
+.lightbox-img.lb-zoomed {
   cursor: grab;
 }
 
@@ -1558,21 +1564,52 @@ footer {
   }
 
   .gallery {
-    grid-template-columns: repeat(4, 1fr);
-    grid-auto-rows: 120px;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: auto;
+  }
+
+  .g-tile,
+  .g-2x2,
+  .g-2x1,
+  .g-1x1 {
+    grid-row: auto;
+  }
+
+  .g-2x2,
+  .g-2x1 {
+    grid-column: span 2;
+    aspect-ratio: 16 / 9;
+  }
+
+  .g-1x1 {
+    grid-column: span 1;
+    aspect-ratio: 4 / 3;
   }
 
   .lightbox {
-    padding: 20px;
+    padding: 12px;
+  }
+
+  .lightbox-inner {
+    height: 72vh;
   }
 
   .lightbox-arrow {
-    width: 38px;
-    height: 38px;
+    width: 44px;
+    height: 44px;
   }
 
-  .lightbox-arrow.prev { left: 0; }
-  .lightbox-arrow.next { right: 0; }
+  .lightbox-arrow.prev { left: 4px; }
+  .lightbox-arrow.next { right: 4px; }
+
+  .lightbox-close {
+    top: 12px;
+    right: 12px;
+  }
+
+  .lightbox-counter {
+    bottom: -30px;
+  }
 
   .hero,
   .about,
@@ -1740,7 +1777,20 @@ body > *:not(.work-gate) {
   transition: opacity .6s ease;
 }
 
+/* Subtle repeating watermark, brick-offset so it doesn't read as a rigid grid */
+.work-gate::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='110'%3E%3Ctext x='6' y='34' font-family='Montserrat,sans-serif' font-size='13' font-weight='700' letter-spacing='3' fill='%23F2F0EA' fill-opacity='0.035'%3ENIRY HASINA R.%3C/text%3E%3Ctext x='166' y='89' font-family='Montserrat,sans-serif' font-size='13' font-weight='700' letter-spacing='3' fill='%23F2F0EA' fill-opacity='0.035'%3ENIRY HASINA R.%3C/text%3E%3C/svg%3E");
+  background-repeat: repeat;
+  pointer-events: none;
+}
+
 .work-gate-inner {
+  position: relative;
+  z-index: 1;
   max-width: 560px;
   width: 100%;
 }

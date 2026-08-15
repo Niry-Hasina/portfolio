@@ -31,24 +31,27 @@ document.querySelectorAll('.reveal, .stagger').forEach(el => io.observe(el));
   const lightbox     = document.getElementById('lightbox');
   if (!galleryTiles.length || !lightbox) return;   // not a case-study page
 
-  const lbTrack   = lightbox.querySelector('.lightbox-track');
+  const stage     = lightbox.querySelector('.lightbox-track');
   const lbCounter = lightbox.querySelector('.lightbox-counter');
-  let   lbIndex   = 0;
   const lbTotal   = galleryTiles.length;
+  let   lbIndex   = 0;
 
-  /* ─── Build one slide per tile ─── */
-  galleryTiles.forEach((tile) => {
-    const slide = document.createElement('div');
-    slide.className = 'lightbox-slide';
+  /* ─── One entry per tile: an image URL, or placeholder text. Read once
+   * up front — after this, navigation only ever touches a single <img>,
+   * so there's no multi-element track to misalign or size wrong. ─── */
+  const items = Array.from(galleryTiles).map((tile) => {
     const img = tile.querySelector('img');
-    if (img) {
-      slide.appendChild(img.cloneNode(true));
-    } else {
-      const ph = tile.querySelector('.cs-placeholder');
-      if (ph) slide.innerHTML = ph.outerHTML;
-    }
-    lbTrack.appendChild(slide);
+    if (img) return { src: img.src, alt: img.alt || '' };
+    const ph = tile.querySelector('.cs-placeholder');
+    return { placeholder: ph ? ph.textContent : '' };
   });
+
+  const lbImg = document.createElement('img');
+  lbImg.className = 'lightbox-img';
+  const lbPlaceholder = document.createElement('div');
+  lbPlaceholder.className = 'lightbox-img-placeholder';
+  stage.appendChild(lbImg);
+  stage.appendChild(lbPlaceholder);
 
   /* ─── Zoom + Pan state ─── */
   const ZOOM   = 2.5;
@@ -58,37 +61,40 @@ document.querySelectorAll('.reveal, .stagger').forEach(el => io.observe(el));
   let dragStartX = 0, dragStartY = 0;
   let touchId = null;
 
-  function getActiveImg() {
-    const slide = lbTrack.querySelectorAll('.lightbox-slide')[lbIndex];
-    return slide ? slide.querySelector('img') : null;
-  }
-
-  /* Apply current pan on top of the zoom (translate is in element-local px) */
-  function applyPan(img) {
-    img.style.transition = 'none';
-    img.style.transform  = `scale(${ZOOM}) translate(${panX / ZOOM}px, ${panY / ZOOM}px)`;
+  function applyPan() {
+    lbImg.style.transition = 'none';
+    lbImg.style.transform  = `scale(${ZOOM}) translate(${panX / ZOOM}px, ${panY / ZOOM}px)`;
   }
 
   function resetZoom() {
-    const img = getActiveImg();
-    if (!img) return;
-    img.classList.remove('lb-zoomed');
-    img.style.transition      = '';
-    img.style.transform       = '';
-    img.style.transformOrigin = '';
-    img.style.cursor          = '';
+    lbImg.classList.remove('lb-zoomed');
+    lbImg.style.transition      = '';
+    lbImg.style.transform       = '';
+    lbImg.style.transformOrigin = '';
+    lbImg.style.cursor          = '';
     panX = 0; panY = 0;
   }
 
-  function updateLightbox() {
+  function renderSlide() {
     resetZoom();
-    lbTrack.style.transform = `translateX(-${lbIndex * 100}%)`;
+    const item = items[lbIndex];
+    if (item.src) {
+      lbImg.src            = item.src;
+      lbImg.alt            = item.alt;
+      lbImg.style.display  = '';
+      lbPlaceholder.style.display = 'none';
+    } else {
+      lbImg.removeAttribute('src');
+      lbImg.style.display  = 'none';
+      lbPlaceholder.textContent  = item.placeholder;
+      lbPlaceholder.style.display = '';
+    }
     if (lbCounter) lbCounter.textContent = (lbIndex + 1) + ' / ' + lbTotal;
   }
 
   function openLightbox(index) {
     lbIndex = index;
-    updateLightbox();
+    renderSlide();
     lightbox.classList.add('open');
     document.body.style.overflow = 'hidden';
   }
@@ -99,90 +105,124 @@ document.querySelectorAll('.reveal, .stagger').forEach(el => io.observe(el));
     document.body.style.overflow = '';
   }
 
-  function lbGoTo(i) { lbIndex = (i + lbTotal) % lbTotal; updateLightbox(); }
+  /* Crossfade to a new index — an opacity swap on one element, so there's
+   * nothing that can end up showing the wrong image or the wrong size. */
+  function lbGoTo(i) {
+    const next = (i + lbTotal) % lbTotal;
+    if (next === lbIndex) return;
+    stage.classList.add('is-fading');
+    window.setTimeout(() => {
+      lbIndex = next;
+      renderSlide();
+      stage.classList.remove('is-fading');
+    }, 160);
+  }
 
   /* ─── Click: zoom in at cursor / dezoom on tap (only if not a drag) ─── */
-  lbTrack.addEventListener('click', (e) => {
-    if (hasDragged) { hasDragged = false; return; }   // was a pan — ignore
-    const img = e.target.closest('.lightbox-slide img');
-    if (!img) return;
+  stage.addEventListener('click', (e) => {
+    if (hasDragged) { hasDragged = false; return; }   // was a pan/swipe — ignore
+    if (e.target !== lbImg) return;
 
-    if (img.classList.contains('lb-zoomed')) {
+    if (lbImg.classList.contains('lb-zoomed')) {
       resetZoom();
     } else {
-      const rect = img.getBoundingClientRect();
+      const rect = lbImg.getBoundingClientRect();
       const ox   = ((e.clientX - rect.left) / rect.width  * 100).toFixed(1) + '%';
       const oy   = ((e.clientY - rect.top)  / rect.height * 100).toFixed(1) + '%';
-      img.style.transition      = '';
-      img.style.transformOrigin = `${ox} ${oy}`;
-      img.style.transform       = `scale(${ZOOM})`;
-      img.style.cursor          = 'grab';
-      img.classList.add('lb-zoomed');
+      lbImg.style.transition      = '';
+      lbImg.style.transformOrigin = `${ox} ${oy}`;
+      lbImg.style.transform       = `scale(${ZOOM})`;
+      lbImg.style.cursor          = 'grab';
+      lbImg.classList.add('lb-zoomed');
       panX = 0; panY = 0;
     }
   });
 
   /* ─── Mouse pan ─── */
-  lbTrack.addEventListener('mousedown', (e) => {
-    const img = e.target.closest('.lightbox-slide img');
-    if (!img || !img.classList.contains('lb-zoomed')) return;
+  stage.addEventListener('mousedown', (e) => {
+    if (e.target !== lbImg || !lbImg.classList.contains('lb-zoomed')) return;
     isPanning   = true;
     hasDragged  = false;
     dragStartX  = e.clientX - panX;
     dragStartY  = e.clientY - panY;
-    img.style.cursor = 'grabbing';
+    lbImg.style.cursor = 'grabbing';
     e.preventDefault();
   });
 
   document.addEventListener('mousemove', (e) => {
-    if (!isPanning) return;
-    const img = getActiveImg();
-    if (!img || !img.classList.contains('lb-zoomed')) return;
+    if (!isPanning || !lbImg.classList.contains('lb-zoomed')) return;
     const dx = e.clientX - dragStartX;
     const dy = e.clientY - dragStartY;
     if (Math.abs(dx - panX) > THRESH || Math.abs(dy - panY) > THRESH) hasDragged = true;
     panX = dx; panY = dy;
-    applyPan(img);
+    applyPan();
   });
 
   document.addEventListener('mouseup', () => {
     if (!isPanning) return;
     isPanning = false;
-    const img = getActiveImg();
-    if (img && img.classList.contains('lb-zoomed')) img.style.cursor = 'grab';
+    if (lbImg.classList.contains('lb-zoomed')) lbImg.style.cursor = 'grab';
   });
 
-  /* ─── Touch pan ─── */
-  lbTrack.addEventListener('touchstart', (e) => {
-    const img = e.target.closest('.lightbox-slide img');
-    if (!img || !img.classList.contains('lb-zoomed')) return;
-    const t    = e.changedTouches[0];
-    touchId    = t.identifier;
-    isPanning  = true;
-    hasDragged = false;
-    dragStartX = t.clientX - panX;
-    dragStartY = t.clientY - panY;
-    e.preventDefault();
+  /* ─── Touch: pan when zoomed, swipe threshold to navigate otherwise ─── */
+  let swipeStartX = 0, swipeStartY = 0, isSwiping = false;
+  const SWIPE_THRESH = 50;   // px of release distance needed to commit to next/prev
+  const DRAG_THRESH  = 6;    // px of movement before a touch counts as a drag (blocks zoom-click)
+
+  stage.addEventListener('touchstart', (e) => {
+    const t = e.changedTouches[0];
+
+    if (lbImg.classList.contains('lb-zoomed')) {
+      touchId    = t.identifier;
+      isPanning  = true;
+      hasDragged = false;
+      dragStartX = t.clientX - panX;
+      dragStartY = t.clientY - panY;
+      e.preventDefault();
+    } else if (lbTotal > 1) {
+      isSwiping   = true;
+      hasDragged  = false;
+      swipeStartX = t.clientX;
+      swipeStartY = t.clientY;
+    }
   }, { passive: false });
 
-  lbTrack.addEventListener('touchmove', (e) => {
-    if (!isPanning || touchId === null) return;
-    const t = [...e.changedTouches].find(x => x.identifier === touchId);
-    if (!t) return;
-    const img = getActiveImg();
-    if (!img || !img.classList.contains('lb-zoomed')) return;
-    const dx = t.clientX - dragStartX;
-    const dy = t.clientY - dragStartY;
-    if (Math.abs(dx - panX) > THRESH || Math.abs(dy - panY) > THRESH) hasDragged = true;
-    panX = dx; panY = dy;
-    applyPan(img);
-    e.preventDefault();
+  stage.addEventListener('touchmove', (e) => {
+    if (isPanning && touchId !== null) {
+      const t = [...e.changedTouches].find(x => x.identifier === touchId);
+      if (!t) return;
+      const dx = t.clientX - dragStartX;
+      const dy = t.clientY - dragStartY;
+      if (Math.abs(dx - panX) > THRESH || Math.abs(dy - panY) > THRESH) hasDragged = true;
+      panX = dx; panY = dy;
+      applyPan();
+      e.preventDefault();
+      return;
+    }
+
+    if (isSwiping) {
+      const t  = e.changedTouches[0];
+      const dx = t.clientX - swipeStartX;
+      const dy = t.clientY - swipeStartY;
+      if (Math.abs(dx) > DRAG_THRESH) hasDragged = true;
+      if (Math.abs(dx) > Math.abs(dy)) e.preventDefault();  // horizontal drag owns the gesture
+    }
   }, { passive: false });
 
-  lbTrack.addEventListener('touchend', () => {
-    isPanning = false;
-    touchId   = null;
-    // dezoom on tap is handled by the click event above
+  stage.addEventListener('touchend', (e) => {
+    if (isPanning) {
+      isPanning = false;
+      touchId   = null;
+      return;
+    }
+    if (!isSwiping) return;
+    isSwiping = false;
+    const t  = e.changedTouches[0];
+    const dx = t.clientX - swipeStartX;
+    const dy = t.clientY - swipeStartY;
+    if (Math.abs(dx) > SWIPE_THRESH && Math.abs(dx) > Math.abs(dy)) {
+      lbGoTo(dx < 0 ? lbIndex + 1 : lbIndex - 1);
+    }
   });
 
   /* ─── Lightbox controls ─── */
