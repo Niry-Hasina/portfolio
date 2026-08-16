@@ -1252,7 +1252,9 @@ footer {
 
 /* ---------- TOOLS CORNER ---------- */
 .tools-corner {
-  flex: 0 0 auto;
+  flex: 1 1 280px;
+  max-width: 100%;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -1276,6 +1278,7 @@ footer {
   gap: 14px;
   flex-wrap: wrap;
   justify-content: flex-end;
+  max-width: 100%;
 }
 
 .tool-badge {
@@ -1420,26 +1423,22 @@ footer {
 }
 
 .gallery {
-  display: grid;
-  /* auto-fit collapses any column that ends up with no tile in it and lets
-     the remaining tiles' 1fr tracks expand to fill the row — so 3 tiles
-     stretch to fill the full width just as well as 6 do, with no leftover
-     empty space, at any viewport width. */
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  grid-auto-rows: 140px;
-  grid-auto-flow: dense;
-  gap: 2px;
-  /*background: var(--line);*/
+  /* Multi-column masonry: each tile keeps the image's own aspect ratio
+     (no cropping) and packs into whichever column is shortest, so the
+     grid always fills edge to edge with no leftover empty space and no
+     manual per-tile size class needed. */
+  columns: 3;
+  column-gap: 2px;
   border: 1px solid var(--line);
 }
 
 .g-tile {
   position: relative;
   overflow: hidden;
+  break-inside: avoid;
+  margin-bottom: 2px;
   cursor: pointer;
-  display: flex;
-  align-items: flex-end;
-  padding: 16px;
+  display: block;
   transition: transform .3s ease;
 }
 
@@ -1448,16 +1447,9 @@ footer {
 }
 
 .g-tile img {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center center;
   display: block;
+  width: 100%;
+  height: auto;
   transition: transform .4s ease;
   -webkit-user-drag: none;
   -webkit-touch-callout: none;
@@ -1469,16 +1461,9 @@ footer {
 }
 
 .g-tile video {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center center;
   display: block;
+  width: 100%;
+  height: auto;
   background: #000;
   transition: transform .4s ease;
   -webkit-user-drag: none;
@@ -1531,13 +1516,30 @@ footer {
 }
 
 .g-tile .cs-placeholder {
-  position: relative;
   z-index: 2;
   font-family: 'Montserrat', sans-serif;
   color: var(--muted-dark);
   font-size: 10.5px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+}
+
+/* Tile has a real image/video: the placeholder text is legacy fallback
+   content, keep it out of the way in the corner instead of taking up
+   flow space above the media. */
+.g-tile:has(img) .cs-placeholder,
+.g-tile:has(video) .cs-placeholder {
+  position: absolute;
+  bottom: 14px;
+  left: 16px;
+}
+
+/* No media yet: give the placeholder its own visible block so the tile
+   isn't a sliver while the real asset is still pending. */
+.g-tile:not(:has(img)):not(:has(video)) .cs-placeholder {
+  position: relative;
+  display: block;
+  padding: 48px 16px;
 }
 
 .g-tile .cs-tag {
@@ -1806,32 +1808,7 @@ footer {
   }
 
   .gallery {
-    grid-template-columns: repeat(2, 1fr);
-    grid-auto-rows: auto;
-  }
-
-  .g-tile,
-  .g-2x2,
-  .g-2x1,
-  .g-1x1,
-  .g-1x2 {
-    grid-row: auto;
-  }
-
-  .g-2x2,
-  .g-2x1 {
-    grid-column: span 2;
-    aspect-ratio: 16 / 9;
-  }
-
-  .g-1x1 {
-    grid-column: span 1;
-    aspect-ratio: 4 / 3;
-  }
-
-  .g-1x2 {
-    grid-column: span 1;
-    aspect-ratio: 3 / 4;
+    columns: 2;
   }
 
   .lightbox {
@@ -1960,6 +1937,10 @@ footer {
 @media (max-width:460px) {
   .hero-kicker {
     max-width: 100%;
+  }
+
+  .gallery {
+    columns: 1;
   }
 
   .about-photo {
