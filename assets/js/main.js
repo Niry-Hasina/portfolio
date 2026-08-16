@@ -33,7 +33,7 @@ function guardImage(img) {
   img.addEventListener('contextmenu', (e) => e.preventDefault());
   img.addEventListener('dragstart', (e) => e.preventDefault());
 }
-document.querySelectorAll('.g-tile img').forEach(guardImage);
+document.querySelectorAll('.g-tile img, .g-tile video').forEach(guardImage);
 
 /* ─── Gallery lightbox ──────────────────────────────────────── */
 (function () {
@@ -46,22 +46,43 @@ document.querySelectorAll('.g-tile img').forEach(guardImage);
   const lbTotal   = galleryTiles.length;
   let   lbIndex   = 0;
 
-  /* ─── One entry per tile: an image URL, or placeholder text. Read once
-   * up front — after this, navigation only ever touches a single <img>,
-   * so there's no multi-element track to misalign or size wrong. ─── */
+  /* ─── One entry per tile: an image URL, a video source, or placeholder
+   * text. Read once up front — after this, navigation only ever touches
+   * a single reusable element per type, so there's no multi-element track
+   * to misalign or size wrong. ─── */
   const items = Array.from(galleryTiles).map((tile) => {
     const img = tile.querySelector('img');
-    if (img) return { src: img.src, alt: img.alt || '' };
+    if (img) return { type: 'image', src: img.src, alt: img.alt || '' };
+    const video = tile.querySelector('video');
+    if (video) {
+      const source = video.querySelector('source');
+      return {
+        type: 'video',
+        src: source ? source.src : video.currentSrc,
+        srcType: source ? source.type : 'video/mp4',
+        poster: video.poster || ''
+      };
+    }
     const ph = tile.querySelector('.cs-placeholder');
-    return { placeholder: ph ? ph.textContent : '' };
+    return { type: 'placeholder', placeholder: ph ? ph.textContent : '' };
   });
 
   const lbImg = document.createElement('img');
   lbImg.className = 'lightbox-img';
   guardImage(lbImg);
+  const lbVideo = document.createElement('video');
+  lbVideo.className = 'lightbox-video';
+  lbVideo.controls = true;
+  lbVideo.playsInline = true;
+  lbVideo.setAttribute('controlsList', 'nodownload noremoteplayback');
+  lbVideo.disablePictureInPicture = true;
+  guardImage(lbVideo);
+  const lbVideoSource = document.createElement('source');
+  lbVideo.appendChild(lbVideoSource);
   const lbPlaceholder = document.createElement('div');
   lbPlaceholder.className = 'lightbox-img-placeholder';
   stage.appendChild(lbImg);
+  stage.appendChild(lbVideo);
   stage.appendChild(lbPlaceholder);
 
   /* ─── Zoom + Pan state ─── */
@@ -88,17 +109,30 @@ document.querySelectorAll('.g-tile img').forEach(guardImage);
 
   function renderSlide() {
     resetZoom();
+    if (!lbVideo.paused) lbVideo.pause();
+
     const item = items[lbIndex];
-    if (item.src) {
-      lbImg.src            = item.src;
-      lbImg.alt            = item.alt;
-      lbImg.style.display  = '';
-      lbPlaceholder.style.display = 'none';
+    lbImg.style.display   = 'none';
+    lbVideo.style.display = 'none';
+    lbPlaceholder.style.display = 'none';
+
+    if (item.type === 'image') {
+      lbImg.src           = item.src;
+      lbImg.alt           = item.alt;
+      lbImg.style.display = '';
+    } else if (item.type === 'video') {
+      lbVideoSource.src    = item.src;
+      lbVideoSource.type   = item.srcType;
+      lbVideo.poster       = item.poster;
+      lbVideo.load();
+      lbVideo.style.display = '';
+      lbVideo.play().catch(() => {});   // autoplay on open/next/prev; ignore if browser blocks it
     } else {
-      lbImg.removeAttribute('src');
-      lbImg.style.display  = 'none';
       lbPlaceholder.textContent  = item.placeholder;
-      lbPlaceholder.style.display = '';
+      // .lightbox-img-placeholder is display:none by default in CSS, so
+      // clearing the inline style here would fall back to that and stay
+      // hidden. Set it explicitly instead.
+      lbPlaceholder.style.display = 'block';
     }
     if (lbCounter) lbCounter.textContent = (lbIndex + 1) + ' / ' + lbTotal;
   }
@@ -112,6 +146,7 @@ document.querySelectorAll('.g-tile img').forEach(guardImage);
 
   function closeLightbox() {
     resetZoom();
+    if (!lbVideo.paused) lbVideo.pause();
     lightbox.classList.remove('open');
     document.body.style.overflow = '';
   }
