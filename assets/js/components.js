@@ -81,7 +81,7 @@
       <div class="footer-title reveal">Let's build something<br><span class="hl">worth remembering.</span></div>
       <div class="footer-grid">
         <div class="footer-col"><span class="label">Contact</span><a href="mailto:randriamihamina@outlook.com">randriamihamina@outlook.com</a><br>+971 55 327 6901</div>
-        <div class="footer-col"><span class="label">Elsewhere</span><a href="#">niry-hasina.com</a><br><a href="#">linkedin.com/in/niry-hasina</a></div>
+        <div class="footer-col"><span class="label">Elsewhere</span><a href="https://www.linkedin.com/in/niry-hasina/">linkedin.com/in/niry-hasina</a></div>
         <div class="footer-col"><span class="label">Based in</span>Dubai, UAE<br>EN · FR · MG</div>
       </div>
     </div>
