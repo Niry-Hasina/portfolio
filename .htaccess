@@ -1,0 +1,7 @@
+# SEO Protection for work & case-study media
+<IfModule mod_headers.c>
+  <FilesMatch "(?i)\.(jpe?g|png|gif|webp|svg|mp4|webm|mov)$">
+    SetEnvIf Request_URI "(?:^|/)(work|case-study|assets/images/work|assets/videos)(?:/|$)" IS_PROJECT_MEDIA
+    Header set X-Robots-Tag "noindex" env=IS_PROJECT_MEDIA
+  </FilesMatch>
+</IfModule>
