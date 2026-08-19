@@ -1066,6 +1066,16 @@
       }
     });
 
+    window.addEventListener('keyup', (e) => {
+      if (e.key === 'PrintScreen' || e.keyCode === 44) {
+        document.documentElement.classList.add('screen-protected');
+        if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(''); }
+        setTimeout(() => document.documentElement.classList.remove('screen-protected'), 1500);
+      }
+    });
+    window.addEventListener('blur', () => document.documentElement.classList.add('screen-protected'));
+    window.addEventListener('focus', () => document.documentElement.classList.remove('screen-protected'));
+
     // scroll progress bar
     const progressBar = document.getElementById('progressBar');
     window.addEventListener('scroll', () => {

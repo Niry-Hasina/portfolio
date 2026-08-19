@@ -84,6 +84,9 @@
         <div class="footer-col"><span class="label">Elsewhere</span><a href="https://www.linkedin.com/in/niry-hasina/">linkedin.com/in/niry-hasina</a></div>
         <div class="footer-col"><span class="label">Based in</span>Dubai, UAE<br>EN · FR · MG</div>
       </div>
+      <div class="footer-notice">
+        © 2026 Niry Hasina Randriamihamina. All rights reserved. Confidential &amp; proprietary work — unauthorized copying, extraction, or redistribution of design assets and media is strictly prohibited.
+      </div>
     </div>
   </footer>`;
   }

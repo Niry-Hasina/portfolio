@@ -56,6 +56,31 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
+/* ─── Screenshot Deterrent (PrintScreen key & Window Blur masking) ─── */
+function triggerScreenProtection() {
+  document.documentElement.classList.add('screen-protected');
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText('');
+  }
+}
+
+window.addEventListener('keyup', (e) => {
+  if (e.key === 'PrintScreen' || e.keyCode === 44) {
+    triggerScreenProtection();
+    setTimeout(() => {
+      document.documentElement.classList.remove('screen-protected');
+    }, 1500);
+  }
+});
+
+window.addEventListener('blur', () => {
+  document.documentElement.classList.add('screen-protected');
+});
+
+window.addEventListener('focus', () => {
+  document.documentElement.classList.remove('screen-protected');
+});
+
 /* ─── Gallery lightbox ──────────────────────────────────────── */
 (function () {
   const galleryTiles = document.querySelectorAll('.g-tile');

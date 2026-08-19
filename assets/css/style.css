@@ -2172,3 +2172,28 @@ body>*:not(.work-gate) {
   color: var(--red);
   border-color: var(--red);
 }
+
+.footer-notice {
+  margin-top: 45px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line-dark);
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--muted-dark);
+  letter-spacing: 0.02em;
+}
+
+/* Anti-screenshot & Anti-print protection */
+html.screen-protected body {
+  filter: blur(30px) grayscale(100%);
+  opacity: 0.05;
+  pointer-events: none;
+  transition: filter 0.15s ease, opacity 0.15s ease;
+}
+
+@media print {
+  html, body {
+    display: none !important;
+  }
+}
