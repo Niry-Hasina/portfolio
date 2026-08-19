@@ -54,9 +54,9 @@ document.addEventListener('keydown', (e) => {
       return;
     }
 
-    // Ctrl+U, Ctrl+S, Ctrl+C, Ctrl+X, Ctrl+A
-    if (key === 'u' || key === 's' || key === 'c' || key === 'x' || key === 'a' ||
-        code === 85 || code === 83 || code === 67 || code === 88 || code === 65) {
+    // Ctrl+U, Ctrl+S, Ctrl+C, Ctrl+X
+    if (key === 'u' || key === 's' || key === 'c' || key === 'x' ||
+        code === 85 || code === 83 || code === 67 || code === 88) {
       e.preventDefault();
       return;
     }
