@@ -16,6 +16,19 @@
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
     })(window, document, "clarity", "script", "y4wbr2lsai");
   </script>
+  <!-- Start of Tawk.to Script -->
+  <script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    s1.async=true;
+    s1.src='https://embed.tawk.to/6a85e0d2ffd04c34434ab67f/1k0dfcee2';
+    s1.charset='UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+    })();
+  </script>
+  <!-- End of Tawk.to Script -->
   <title>Project Title — Niry Hasina Randriamihamina</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
@@ -1081,7 +1094,12 @@
         setTimeout(() => document.documentElement.classList.remove('screen-protected'), 1500);
       }
     });
-    window.addEventListener('blur', () => document.documentElement.classList.add('screen-protected'));
+    window.addEventListener('blur', () => {
+      setTimeout(() => {
+        if (document.activeElement && document.activeElement.tagName === 'IFRAME') return;
+        document.documentElement.classList.add('screen-protected');
+      }, 50);
+    });
     window.addEventListener('focus', () => document.documentElement.classList.remove('screen-protected'));
 
     // scroll progress bar

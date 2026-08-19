@@ -81,7 +81,12 @@ window.addEventListener('keyup', (e) => {
 });
 
 window.addEventListener('blur', () => {
-  document.documentElement.classList.add('screen-protected');
+  setTimeout(() => {
+    if (document.activeElement && document.activeElement.tagName === 'IFRAME') {
+      return;
+    }
+    document.documentElement.classList.add('screen-protected');
+  }, 50);
 });
 
 window.addEventListener('focus', () => {
