@@ -25,6 +25,13 @@ const io = new IntersectionObserver((entries) => {
 
 document.querySelectorAll('.reveal, .stagger').forEach(el => io.observe(el));
 
+/* ─── Image / Media protection helper ─── */
+function guardImage(img) {
+  if (!img) return;
+  img.addEventListener('contextmenu', (e) => e.preventDefault());
+  img.addEventListener('dragstart', (e) => e.preventDefault());
+}
+
 /* ─── Portfolio protection (Right-click, F12, DevTools & Copy shortcuts) ─── */
 document.addEventListener('contextmenu', (e) => e.preventDefault());
 document.addEventListener('dragstart', (e) => e.preventDefault());
