@@ -25,15 +25,36 @@ const io = new IntersectionObserver((entries) => {
 
 document.querySelectorAll('.reveal, .stagger').forEach(el => io.observe(el));
 
-/* ─── Basic image-protection deterrent (right-click / drag) ──────
- * Client-side only — a determined visitor can still get the image via
- * devtools, view-source, or a screenshot. This just removes the casual
- * right-click-and-save / drag-out path. */
-function guardImage(img) {
-  img.addEventListener('contextmenu', (e) => e.preventDefault());
-  img.addEventListener('dragstart', (e) => e.preventDefault());
-}
-document.querySelectorAll('.g-tile img, .g-tile video').forEach(guardImage);
+/* ─── Portfolio protection (Right-click, F12, DevTools & Copy shortcuts) ─── */
+document.addEventListener('contextmenu', (e) => e.preventDefault());
+document.addEventListener('dragstart', (e) => e.preventDefault());
+
+document.addEventListener('keydown', (e) => {
+  const isCmdOrCtrl = e.ctrlKey || e.metaKey;
+  const key = e.key ? e.key.toLowerCase() : '';
+  const code = e.keyCode;
+
+  // F12
+  if (key === 'f12' || code === 123) {
+    e.preventDefault();
+    return;
+  }
+
+  if (isCmdOrCtrl) {
+    // Ctrl+Shift+I / Ctrl+Shift+J / Ctrl+Shift+C
+    if (e.shiftKey && (key === 'i' || key === 'j' || key === 'c' || code === 73 || code === 74 || code === 67)) {
+      e.preventDefault();
+      return;
+    }
+
+    // Ctrl+U, Ctrl+S, Ctrl+C, Ctrl+X, Ctrl+A
+    if (key === 'u' || key === 's' || key === 'c' || key === 'x' || key === 'a' ||
+        code === 85 || code === 83 || code === 67 || code === 88 || code === 65) {
+      e.preventDefault();
+      return;
+    }
+  }
+});
 
 /* ─── Gallery lightbox ──────────────────────────────────────── */
 (function () {

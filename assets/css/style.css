@@ -2073,7 +2073,7 @@ body>*:not(.work-gate) {
 
 .work-gate-input {
   flex: 1;
-  background: transparent;
+  background: rgba(255, 255, 255, 0.16);
   border: none;
   outline: none;
   color: var(--paper);
@@ -2081,7 +2081,7 @@ body>*:not(.work-gate) {
   font-size: 18px;
   font-weight: 500;
   letter-spacing: 0.02em;
-  padding: 6px 0;
+  padding: 20px 15px;
 }
 
 .work-gate-input::placeholder {

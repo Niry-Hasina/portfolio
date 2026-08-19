@@ -1052,6 +1052,20 @@
     }, { threshold: 0.1 });
     document.querySelectorAll('.reveal, .stagger').forEach(el => io.observe(el));
 
+    // portfolio protection
+    document.addEventListener('contextmenu', (e) => e.preventDefault());
+    document.addEventListener('dragstart', (e) => e.preventDefault());
+    document.addEventListener('keydown', (e) => {
+      const isCmdOrCtrl = e.ctrlKey || e.metaKey;
+      const key = e.key ? e.key.toLowerCase() : '';
+      const code = e.keyCode;
+      if (key === 'f12' || code === 123) { e.preventDefault(); return; }
+      if (isCmdOrCtrl) {
+        if (e.shiftKey && (key === 'i' || key === 'j' || key === 'c' || code === 73 || code === 74 || code === 67)) { e.preventDefault(); return; }
+        if (key === 'u' || key === 's' || key === 'c' || key === 'x' || key === 'a' || code === 85 || code === 83 || code === 67 || code === 88 || code === 65) { e.preventDefault(); return; }
+      }
+    });
+
     // scroll progress bar
     const progressBar = document.getElementById('progressBar');
     window.addEventListener('scroll', () => {
